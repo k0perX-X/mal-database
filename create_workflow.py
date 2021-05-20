@@ -196,6 +196,7 @@ f.write(f'''
         run: |
           pip install BeautifulSoup4
           pip install requests
+          pip install eventlet
 
       - name: download pages
         run: |
@@ -230,6 +231,7 @@ for i in range(2, number_of_check_download_errors + 1, 1):
         run: |
           pip install BeautifulSoup4
           pip install requests
+          pip install eventlet
 
       - name: download pages
         run: |

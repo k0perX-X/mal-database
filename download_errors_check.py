@@ -4,6 +4,9 @@ import os
 import sys
 import codecs
 from bs4 import BeautifulSoup
+import eventlet
+eventlet.monkey_patch()
+
 
 step = int(sys.argv[1])
 
@@ -25,11 +28,15 @@ def anime_dic(url: tuple):
     url, number_anime = url[0], url[1]
 
     def get_page(link):
-        return requests.get(link, headers=headers).text
+        try:
+            with eventlet.Timeout(10):
+                return requests.get(link, headers=headers).text
+        except:
+            return None
 
-    pool1 = ThreadPool(2)
-    anime_page_res_stats, anime_page_res = pool1.map(get_page, [url + '/stats', url])
     try:
+        pool1 = ThreadPool(2)
+        anime_page_res_stats, anime_page_res = pool1.map(get_page, [url + '/stats', url])
         soup = BeautifulSoup(anime_page_res, features="html.parser")
         if soup.find(class_='title-name h1_bold_none') is None:
             raise IndexError

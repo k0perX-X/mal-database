@@ -32,8 +32,11 @@ def anime_dic(url: tuple):
     url, number_anime = url[0], url[1]
 
     def get_page(link):
-        with eventlet.Timeout(15):
-            return requests.get(link, headers=headers).text
+        try:
+            with eventlet.Timeout(10):
+                return requests.get(link, headers=headers).text
+        except:
+            return None
 
     try:
         pool1 = ThreadPool(2)
