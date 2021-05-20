@@ -1,8 +1,8 @@
 f = open('.github/workflows/main.yml', 'w')
 step = 200
 min = 0
-max = 600
-number_of_check_download_errors = 2
+max = 18000
+number_of_check_download_errors = 40
 
 
 f.write('''name: parse
