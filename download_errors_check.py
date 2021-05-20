@@ -5,6 +5,7 @@ import sys
 import codecs
 from bs4 import BeautifulSoup
 import eventlet
+from threading import Event
 eventlet.monkey_patch()
 
 
@@ -22,10 +23,12 @@ headers = {
     'Cache-Control': 'no-cache',
 }
 errors = []
+error_event = Event()
+error_event.clear()
 
 
 def anime_dic(url: tuple):
-    url, number_anime = url[0], url[1]
+    url, number_anime, counter = url[0], url[1], url[2]
 
     def get_page(link):
         try:
@@ -34,26 +37,29 @@ def anime_dic(url: tuple):
         except:
             return None
 
-    try:
-        pool1 = ThreadPool(2)
-        anime_page_res_stats, anime_page_res = pool1.map(get_page, [url + '/stats', url])
-        soup = BeautifulSoup(anime_page_res, features="html.parser")
-        if soup.find(class_='title-name h1_bold_none') is None:
-            raise IndexError
-        soup = BeautifulSoup(anime_page_res_stats, features="html.parser")
-        if soup.find(class_='title-name h1_bold_none') is None:
-            raise IndexError
-        with codecs.open(f'latest/pages/{((number_anime - 1) // step) * step}/{number_anime}_stats.html', 'w', 'utf-16') as f:
-            f.write(anime_page_res_stats)
-        with codecs.open(f'latest/pages/{((number_anime - 1) // step) * step}/{number_anime}.html', 'w', 'utf-16') as f:
-            f.write(anime_page_res)
-        return None
-    except IndexError:
-        print(str(number_anime) + " " + url + '\n', end='')
-        return number_anime
-    except Exception as e:
-        print(str(number_anime) + " " + url + str(e) + '\n', end='')
-        return number_anime
+    if not error_event.is_set() or counter < step:
+        try:
+            pool1 = ThreadPool(2)
+            anime_page_res_stats, anime_page_res = pool1.map(get_page, [url + '/stats', url])
+            soup = BeautifulSoup(anime_page_res, features="html.parser")
+            if soup.find(class_='title-name h1_bold_none') is None:
+                raise IndexError
+            soup = BeautifulSoup(anime_page_res_stats, features="html.parser")
+            if soup.find(class_='title-name h1_bold_none') is None:
+                raise IndexError
+            with codecs.open(f'latest/pages/{((number_anime - 1) // step) * step}/{number_anime}_stats.html', 'w', 'utf-16') as f:
+                f.write(anime_page_res_stats)
+            with codecs.open(f'latest/pages/{((number_anime - 1) // step) * step}/{number_anime}.html', 'w', 'utf-16') as f:
+                f.write(anime_page_res)
+            return None
+        except IndexError:
+            print(str(number_anime) + " " + url + '\n', end='')
+            error_event.set()
+            return number_anime
+        except Exception as e:
+            print(str(number_anime) + " " + url + str(e) + '\n', end='')
+            error_event.set()
+            return number_anime
 
 
 for dir in os.listdir('latest/pages'):
@@ -71,16 +77,14 @@ if os.path.isfile('latest/pages/download_errors.txt'):
     os.remove('latest/pages/download_errors.txt')
 
 i = 0
-j = 0
+counter = 0
 urls = []
 with codecs.open('latest/urls.txt', 'r', 'utf-16') as urls_file:
     for url in urls_file:
         i += 1
         if i in errors:
-            j += 1
-            if j > step:
-                break
-            urls.append((url[:-1], i))
+            counter += 1
+            urls.append((url[:-1], i, counter))
             errors.remove(i)
             # print(i, url)
 
