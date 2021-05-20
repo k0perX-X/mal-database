@@ -1,12 +1,11 @@
 f = open('.github/workflows/main.yml', 'w')
-step = 300
+step = 200
 min = 0
-max = 18000
-number_of_check_download_errors = 20
+max = 600
+number_of_check_download_errors = 2
 
 
 f.write('''name: parse
-
 
 on:
   push:
@@ -14,9 +13,7 @@ on:
   pull_request:
     branches: [ master ]
 
-
   workflow_dispatch:
-
 
 jobs:
   preparation:
