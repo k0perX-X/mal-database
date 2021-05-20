@@ -139,6 +139,7 @@ for i in range(min, max, step):
         run: |
           pip install BeautifulSoup4
           pip install requests
+          pip install eventlet
 
       - name: download pages
         run: |

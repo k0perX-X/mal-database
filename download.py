@@ -4,6 +4,8 @@ import sys
 import os
 import codecs
 from bs4 import BeautifulSoup
+import eventlet
+eventlet.monkey_patch()
 
 
 step = int(sys.argv[1])
@@ -30,11 +32,12 @@ def anime_dic(url: tuple):
     url, number_anime = url[0], url[1]
 
     def get_page(link):
-        return requests.get(link, headers=headers).text
+        with eventlet.Timeout(15):
+            return requests.get(link, headers=headers).text
 
-    pool1 = ThreadPool(2)
-    anime_page_res_stats, anime_page_res = pool1.map(get_page, [url + '/stats', url])
     try:
+        pool1 = ThreadPool(2)
+        anime_page_res_stats, anime_page_res = pool1.map(get_page, [url + '/stats', url])
         soup = BeautifulSoup(anime_page_res, features="html.parser")
         if soup.find(class_='title-name h1_bold_none') is None:
             raise FileExistsError
@@ -47,10 +50,10 @@ def anime_dic(url: tuple):
             f.write(anime_page_res)
         return None
     except FileExistsError:
-        print(str(number_anime) + " " + url, end='')
+        print(str(number_anime) + " " + url + '\n', end='')
         return number_anime
     except Exception as e:
-        print(str(number_anime) + " " + url + str(e), end='')
+        print(str(number_anime) + " " + url + str(e) + '\n', end='')
         return number_anime
 
 
