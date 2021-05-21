@@ -160,33 +160,33 @@ def append(path):
         for i in page.xpath('//*[@id="content"]/table/tr/td[1]/div/div'):
             s = ''.join(i.itertext())
             if 'Type:' in s:
-                type_anime = s.replace('Type: ', '').replace('\n', '')
+                type_anime = s.replace('\n', '').replace('Type:', '').replace('  ', ' ')
             if 'Episodes:' in s:
-                episodes = s.replace('Episodes: ', '').replace('\n', '')
+                episodes = s.replace('\n', '').replace('Episodes:', '').replace('  ', ' ')
             if 'Status:' in s:
-                status = s.replace('Status: ', '').replace('\n', '')
+                status = s.replace('\n', '').replace('Status:', '').replace('  ', ' ')
             if 'Aired:' in s:
-                aired = s.replace('Aired: ', '').replace('\n', '')
+                aired = s.replace('\n', '').replace('Aired:', '').replace('  ', ' ')
             if 'Premiered:' in s:
-                premiered = s.replace('Premiered: ', '').replace('\n', '')
+                premiered = s.replace('\n', '').replace('Premiered:', '').replace('  ', ' ')
             if 'Broadcast:' in s:
-                broadcast = s.replace('Broadcast: ', '').replace('\n', '')
+                broadcast = s.replace('\n', '').replace('Broadcast:', '').replace('  ', ' ')
             if 'Producers:' in s:
-                producers = s.replace('Producers: ', '').replace('\n', '')
+                producers = s.replace('\n', '').replace('Producers:', '').replace('  ', ' ')
             if 'Licensors:' in s:
-                licensors = s.replace('Licensors: ', '').replace('\n', '')
+                licensors = s.replace('\n', '').replace('Licensors:', '').replace('  ', ' ')
             if 'Studios:' in s:
-                studios = s.replace('Studios: ', '').replace('\n', '')
+                studios = s.replace('\n', '').replace('Studios:', '').replace('  ', ' ')
             if 'Source:' in s:
-                source = s.replace('Source: ', '').replace('\n', '')
+                source = s.replace('\n', '').replace('Source:', '').replace('  ', ' ')
             if 'Genres:' in s:
-                genres = s.replace('Genres: ', '').replace('\n', '')
+                genres = s.replace('\n', '').replace('Genres:', '').replace('  ', ' ')
             if 'Duration:' in s:
-                duration = s.replace('Duration: ', '').replace('\n', '')
+                duration = s.replace('\n', '').replace('Duration:', '').replace('  ', ' ')
             if 'Rating:' in s:
-                rating = s.replace('Rating: ', '').replace('\n', '')
+                rating = s.replace('\n', '').replace('Rating:', '').replace('  ', ' ')
             if 'Favorites:' in s:
-                favorites = s.replace('Favorites: ', '').replace('\n', '')
+                favorites = s.replace('\n', '').replace('Favorites:', '').replace('  ', ' ')
     except Exception as e:
         error += 'page, '
     if not error_scores:
