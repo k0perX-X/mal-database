@@ -8,10 +8,10 @@ number_of_check_download_errors = 40
 f.write('''name: parse
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  # push:
+  #   branches: [ master ]
+  # pull_request:
+  #   branches: [ master ]
 
   workflow_dispatch:
 
