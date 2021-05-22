@@ -56,6 +56,7 @@ with open(f"latest/date.txt", 'r') as f:
 paths = []
 for dir in os.listdir('latest/pages'):
     if os.path.isdir('latest/pages/' + dir):
+# dir = '17800'
         for file in os.listdir('latest/pages/' + dir):
             if os.path.isfile(f'latest/pages/{dir}/{file}'):
                 if '_stats' not in file:
@@ -117,7 +118,7 @@ def append(path):
         error += 'Score, '
     try:
         link = urls[int(path[path.rindex('/') + 1:-5])]
-    except:
+    except Exception as e:
         error += 'Link, '
     try:
         j = 10
@@ -161,32 +162,96 @@ def append(path):
             s = ''.join(i.itertext())
             if 'Type:' in s:
                 type_anime = s.replace('\n', '').replace('Type:', '').replace('  ', ' ')
+                while type_anime.find('  ') != -1:
+                    type_anime = type_anime.replace('  ', ' ')
+                if type_anime[0] == ' ':
+                    type_anime = type_anime[1:]
             if 'Episodes:' in s:
                 episodes = s.replace('\n', '').replace('Episodes:', '').replace('  ', ' ')
+                while episodes.find('  ') != -1:
+                    episodes = episodes.replace('  ', ' ')
+                if episodes[0] == ' ':
+                    episodes = episodes[1:]
             if 'Status:' in s:
                 status = s.replace('\n', '').replace('Status:', '').replace('  ', ' ')
+                while status.find('  ') != -1:
+                    status = status.replace('  ', ' ')
+                if status[0] == ' ':
+                    status = status[1:]
             if 'Aired:' in s:
                 aired = s.replace('\n', '').replace('Aired:', '').replace('  ', ' ')
+                while aired.find('  ') != -1:
+                    aired = aired.replace('  ', ' ')
+                if aired[0] == ' ':
+                    aired = aired[1:]
             if 'Premiered:' in s:
                 premiered = s.replace('\n', '').replace('Premiered:', '').replace('  ', ' ')
+                while premiered.find('  ') != -1:
+                    premiered = premiered.replace('  ', ' ')
+                if premiered[0] == ' ':
+                    premiered = premiered[1:]
             if 'Broadcast:' in s:
                 broadcast = s.replace('\n', '').replace('Broadcast:', '').replace('  ', ' ')
+                while broadcast.find('  ') != -1:
+                    broadcast = broadcast.replace('  ', ' ')
+                if broadcast[0] == ' ':
+                    broadcast = broadcast[1:]
             if 'Producers:' in s:
                 producers = s.replace('\n', '').replace('Producers:', '').replace('  ', ' ')
+                while producers.find('  ') != -1:
+                    producers = producers.replace('  ', ' ')
+                if producers[0] == ' ':
+                    producers = producers[1:]
             if 'Licensors:' in s:
                 licensors = s.replace('\n', '').replace('Licensors:', '').replace('  ', ' ')
+                while licensors.find('  ') != -1:
+                    licensors = licensors.replace('  ', ' ')
+                if licensors[0] == ' ':
+                    licensors = licensors[1:]
             if 'Studios:' in s:
                 studios = s.replace('\n', '').replace('Studios:', '').replace('  ', ' ')
+                while studios.find('  ') != -1:
+                    studios = studios.replace('  ', ' ')
+                if studios[0] == ' ':
+                    studios = studios[1:]
             if 'Source:' in s:
                 source = s.replace('\n', '').replace('Source:', '').replace('  ', ' ')
+                while source.find('  ') != -1:
+                    source = source.replace('  ', ' ')
+                if source[0] == ' ':
+                    source = source[1:]
             if 'Genres:' in s:
                 genres = s.replace('\n', '').replace('Genres:', '').replace('  ', ' ')
+                while genres.find('  ') != -1:
+                    genres = genres.replace('  ', ' ')
+                if genres[0] == ' ':
+                    genres = genres[1:]
+                genres1 = genres
+                genres = ''
+                for i in genres1.split(', '):
+                    if i[:len(i)//2] == i[len(i)//2:]:
+                        genres += i[:len(i)//2] + ', '
+                    else:
+                        genres += i + ', '
+                genres = genres[:-2]
             if 'Duration:' in s:
                 duration = s.replace('\n', '').replace('Duration:', '').replace('  ', ' ')
+                while duration.find('  ') != -1:
+                    duration = duration.replace('  ', ' ')
+                if duration[0] == ' ':
+                    duration = duration[1:]
             if 'Rating:' in s:
                 rating = s.replace('\n', '').replace('Rating:', '').replace('  ', ' ')
+                while rating.find('  ') != -1:
+                    rating = rating.replace('  ', ' ')
+                if rating[0] == ' ':
+                    rating = rating[1:]
             if 'Favorites:' in s:
                 favorites = s.replace('\n', '').replace('Favorites:', '').replace('  ', ' ')
+                while favorites.find('  ') != -1:
+                    favorites = favorites.replace('  ', ' ')
+                if favorites[0] == ' ':
+                    favorites = favorites[1:]
     except Exception as e:
         error += 'page, '
     if not error_scores:
