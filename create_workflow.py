@@ -2,7 +2,7 @@ f = open('.github/workflows/main.yml', 'w')
 step = 200
 min = 0
 max = 18000
-number_of_check_download_errors = 40
+number_of_check_download_errors = 30
 
 
 f.write('''name: parse
@@ -156,7 +156,7 @@ f.write(''']
         uses: actions/cache@v2
         with:
           path: ./*
-          key: ${{{{ github.sha }}}}-errors_check_2
+          key: ${{ github.sha }}-errors_check_2
       
       - name: Cache assembled
         uses: actions/cache@v2
