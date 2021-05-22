@@ -2449,7 +2449,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [download_0, download_200, download_400, download_600, download_800, download_1000, download_1200, download_1400, download_1600, download_1800, download_2000, download_2200, download_2400, download_2600, download_2800, download_3000, download_3200, download_3400, download_3600, download_3800, download_4000, download_4200, download_4400, download_4600, download_4800, download_5000, download_5200, download_5400, download_5600, download_5800, download_6000, download_6200, download_6400, download_6600, download_6800, download_7000, download_7200, download_7400, download_7600, download_7800, download_8000, download_8200, download_8400, download_8600, download_8800, download_9000, download_9200, download_9400, download_9600, download_9800, download_10000, download_10200, download_10400, download_10600, download_10800, download_11000, download_11200, download_11400, download_11600, download_11800, download_12000, download_12200, download_12400, download_12600, download_12800, download_13000, download_13200, download_13400, download_13600, download_13800, download_14000, download_14200, download_14400, download_14600, download_14800, download_15000, download_15200, download_15400, download_15600, download_15800, download_16000, download_16200, download_16400, download_16600, download_16800, download_17000, download_17200, download_17400, download_17600, download_17800, ]
     steps:
-      - uses: actions/checkout@v2
+      - name: Cache 
+        uses: actions/cache@v2
+        with:
+          path: ./*
+          key: ${{{{ github.sha }}}}-errors_check_2
       
       - name: Cache assembled
         uses: actions/cache@v2

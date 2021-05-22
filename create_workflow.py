@@ -152,7 +152,11 @@ for i in range(min, max, step):
     f.write(f'''download_{i}, ''')
 f.write(''']
     steps:
-      - uses: actions/checkout@v2
+      - name: Cache 
+        uses: actions/cache@v2
+        with:
+          path: ./*
+          key: ${{{{ github.sha }}}}-errors_check_2
       
       - name: Cache assembled
         uses: actions/cache@v2

@@ -56,7 +56,6 @@ with open(f"latest/date.txt", 'r') as f:
 paths = []
 for dir in os.listdir('latest/pages'):
     if os.path.isdir('latest/pages/' + dir):
-# dir = '17800'
         for file in os.listdir('latest/pages/' + dir):
             if os.path.isfile(f'latest/pages/{dir}/{file}'):
                 if '_stats' not in file:
