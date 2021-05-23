@@ -262,6 +262,7 @@ f.write(f'''
           pip install pandas
           pip install lxml
           pip install BeautifulSoup4
+          pip install numpy
       
       - name: tree
         run: |
@@ -271,6 +272,12 @@ f.write(f'''
       - name: python
         run: |
           python parse.py || echo error
+          
+      - name: latest
+        run: |
+          rm -rf csv/latest.csv || error rm
+          datefile=$(cat latest/date.txt)
+          cp 'csv/$datefile.csv' csv/latest.csv || error cp
           
       # - name: rm
       #   run: |

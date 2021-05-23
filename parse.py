@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import codecs
 from bs4 import BeautifulSoup
+import numpy as np
 
 df = pd.DataFrame(columns=[
     'Name',
@@ -46,10 +47,10 @@ df = pd.DataFrame(columns=[
     'Members score 2',
     'Members score 1',
 ])
-urls = ['0']
-with codecs.open('latest/urls.txt', 'r', 'utf-16') as f:
-    for line in f:
-        urls.append(line[:-1])
+# urls = ['0']
+# with codecs.open('latest/urls.txt', 'r', 'utf-16') as f:
+#     for line in f:
+#         urls.append(line[:-1])
 with open(f"latest/date.txt", 'r') as f:
     date = f.read()
 
@@ -64,6 +65,15 @@ paths.sort(key=lambda x: int(x[x.rindex('/') + 1:-5]))
 
 
 def append(path):
+    def cleaning_str(s):
+        while s.find('  ') != -1:
+            s = s.replace('  ', ' ')
+        if s[0] == ' ':
+            s = s[1:]
+        if s[-1] == ' ':
+            s = s[:-1]
+        return s
+
     with codecs.open(path, 'r', 'utf-16') as f:
         page = lxml.etree.fromstring(f.read(), parser=lxml.etree.HTMLParser())
     with codecs.open(path[:-5] + '_stats.html', 'r', 'utf-16') as f:
@@ -101,49 +111,63 @@ def append(path):
     scores = [None for i in range(10)]
     try:
         name = page.xpath('//*[@class="title-name h1_bold_none"]/strong')[0].text
+        name = cleaning_str(name)
     except:
         error += 'Name, '
     try:
         score_rank = page.xpath('//*[@class="numbers ranked"]/strong')[0].text.replace('#', '')
+        score_rank = cleaning_str(score_rank)
     except:
         error += 'Score_rank, '
     try:
         popularity_rank = page.xpath('//*[@class="numbers popularity"]/strong')[0].text.replace('#', '')
+        popularity_rank = cleaning_str(popularity_rank)
     except:
         error += 'Popularity_rank, '
     try:
         score = page.xpath('//*[@class="fl-l score"]/div')[0].text
+        score = cleaning_str(score)
     except:
         error += 'Score, '
     try:
-        link = urls[int(path[path.rindex('/') + 1:-5])]
+        # link = urls[int(path[path.rindex('/') + 1:-5])]
+        link = page.xpath('//*[@class="breadcrumb "]/div[3]/a')[0].get('href')
     except Exception as e:
-        error += 'Link, '
+        error += f'Link, {e}'
     try:
         j = 10
         for i in stats.find_all("div", class_="spaceit_pad"):
             if 'Watching:' in i.text:
                 watching = i.text.replace('Watching: ', '')
+                watching = cleaning_str(watching)
             elif 'Completed:' in i.text:
                 completed = i.text.replace('Completed: ', '')
+                completed = cleaning_str(completed)
             elif 'On-Hold:' in i.text:
                 on_hold = i.text.replace('On-Hold: ', '')
+                on_hold = cleaning_str(on_hold)
             elif 'Dropped:' in i.text:
                 dropped = i.text.replace('Dropped: ', '')
+                dropped = cleaning_str(dropped)
             elif 'Plan to Watch:' in i.text:
                 plan_to_watch = i.text.replace('Plan to Watch: ', '')
+                plan_to_watch = cleaning_str(plan_to_watch)
             elif 'Total:' in i.text:
                 total = i.text.replace('Total: ', '')
+                total = cleaning_str(total)
             # elif 'votes' in i.text:
             #     j -= 1
             #     print(i.text)
             #     scores[j] = i.text[i.text.find('(') + 1: i.text.rindex('votes') - 1]
             elif 'English:' in i.text:
                 english = i.text.replace('English: ', '').replace('\n', '')
+                english = cleaning_str(english)
             elif 'Synonyms:' in i.text:
                 synonyms = i.text.replace('Synonyms: ', '').replace('\n', '')
+                synonyms = cleaning_str(synonyms)
             elif 'Japanese:' in i.text:
                 japanese = i.text.replace('Japanese: ', '').replace('\n', '')
+                japanese = cleaning_str(japanese)
     except Exception as e:
         error += f'stats, '
     try:
@@ -153,6 +177,11 @@ def append(path):
                 if splitted[i].isnumeric():
                     scores[int(splitted[i]) - 1] = \
                         splitted[i + 1][splitted[i + 1].find('(') + 1: splitted[i + 1].rindex('votes') - 1]
+        for i in range(len(scores)):
+            try:
+                scores[i] = cleaning_str(scores[i])
+            except:
+                pass
     except:
         error += f'scores, '
         error_scores = True
@@ -301,12 +330,23 @@ def append(path):
     }
 
 
-pool = ThreadPool(50)
+pool = ThreadPool(100)
 results = list(pool.map(append, paths))
 # results = list(map(append, paths))
 
 for result in results:
     df = df.append(result, ignore_index=True)
+df = df.replace('None found, add some ', np.NAN).replace('None ', np.NAN)\
+    .replace('Unknown ', np.NAN).replace('N/A', np.NAN)
+df['Members On-Hold'] = df['Members On-Hold'].str.replace(',', '')
+df['Members Total'] = df['Members Total'].str.replace(',', '')
+df['Members Watching'] = df['Members Watching'].str.replace(',', '')
+df['Members Completed'] = df['Members Completed'].str.replace(',', '')
+df['Members Dropped'] = df['Members Dropped'].str.replace(',', '')
+df['Members Plan to Watch'] = df['Members Plan to Watch'].str.replace(',', '')
+df['Members Favorites'] = df['Members Favorites'].str.replace(',', '')
+for i in df.columns:
+    df[i] = df[i].str.replace('\n', '')
 
 if not os.path.exists(f'csv'):
     os.mkdir(f'csv')
