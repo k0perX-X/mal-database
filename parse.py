@@ -348,6 +348,8 @@ df['Members Favorites'] = df['Members Favorites'].str.replace(',', '')
 for i in df.columns:
     df[i] = df[i].str.replace('\n', '')
 
+df = df.drop_duplicates()
+
 if not os.path.exists(f'csv'):
     os.mkdir(f'csv')
 df.to_csv(f'csv/{date}.csv')
