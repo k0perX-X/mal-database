@@ -1,8 +1,8 @@
 f = open('.github/workflows/main.yml', 'w')
 step = 200
 min = 0
-max = 18000
-number_of_check_download_errors = 30
+max = 1000
+number_of_check_download_errors = 2
 
 
 f.write('''name: parse
@@ -277,7 +277,7 @@ f.write(f'''
         run: |
           rm -rf csv/latest.csv || error rm
           datefile=$(cat latest/date.txt)
-          cp 'csv/$datefile.csv' csv/latest.csv || error cp
+          cp csv/$datefile.csv csv/latest.csv || error cp
           
       # - name: rm
       #   run: |
